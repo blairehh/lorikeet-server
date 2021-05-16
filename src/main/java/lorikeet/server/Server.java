@@ -1,7 +1,6 @@
 package lorikeet.server;
 
 import lorikeet.Axon;
-import lorikeet.DefaultAxon;
 import lorikeet.console.ConsoleWriter;
 import lorikeet.console.PrettyConsoleWriter;
 import lorikeet.disk.Disk;
