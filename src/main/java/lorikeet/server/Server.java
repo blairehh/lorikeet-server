@@ -63,6 +63,7 @@ public class Server {
         final Axon<KernelType> axon = new DefaultAxon<>((KernelType)spec.getKernel());
 
         return new SubSystem<>(
+            spec.getName(),
             axon,
             dependencies,
             signalSystems
