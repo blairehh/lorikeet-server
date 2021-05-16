@@ -3,7 +3,7 @@ package lorikeet.server;
 import lorikeet.Axon;
 import lorikeet.DefaultAxon;
 import lorikeet.console.ConsoleWriter;
-import lorikeet.console.SimpleConsoleWriter;
+import lorikeet.console.PrettyConsoleWriter;
 import lorikeet.disk.Disk;
 import lorikeet.disk.DiskFile;
 import lorikeet.disk.FileDigResult;
@@ -38,7 +38,7 @@ public class Server {
 
             final DSLReader reader = new DSLReader(file.asJarURL());
             final SubSystemDSLSpec spec = reader.read("index.lorikeet");
-            this.run(this.buildSubSystem(spec), new SimpleConsoleWriter());
+            this.run(this.buildSubSystem(spec), new PrettyConsoleWriter());
         } else {
             System.out.println("could not find " + args.jar());
         }

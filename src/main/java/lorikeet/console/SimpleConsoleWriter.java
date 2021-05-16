@@ -1,18 +1,19 @@
 package lorikeet.console;
 
 import lorikeet.dependencies.Dependency;
+import lorikeet.dependencies.InitStatus;
 import lorikeet.server.signals.SignalSystem;
 import lorikeet.subsystem.SubSystem;
 
 public class SimpleConsoleWriter implements ConsoleWriter {
     @Override
-    public void dependencyStarted(SubSystem<?> subsystem, Dependency dependency) {
-        System.out.println("started " + dependency.name());
+    public void dependencyInitStatus(SubSystem<?> subsystem, Dependency dependency, InitStatus status) {
+        System.out.println("dependency " + dependency.name() + " " + status.getClass().getSimpleName());
     }
 
     @Override
-    public void signalSystemStarted(SubSystem<?> subsystem, SignalSystem<?> signalSystem) {
-        System.out.println("started " + signalSystem.name());
+    public void signalSystemInitStatus(SubSystem<?> subsystem, SignalSystem<?> signalSystem, InitStatus status) {
+        System.out.println(signalSystem.name() + " " + status.getClass().getSimpleName());
     }
 
     @Override

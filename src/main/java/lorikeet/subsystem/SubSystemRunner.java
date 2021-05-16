@@ -1,7 +1,7 @@
 package lorikeet.subsystem;
 
 import lorikeet.console.ConsoleWriter;
-import lorikeet.dependencies.Dependency;
+import lorikeet.dependencies.InitStatus;
 import lorikeet.server.signals.lifecycle.LifeCycleSignalSystem;
 
 public class SubSystemRunner<KernelType> {
@@ -32,15 +32,15 @@ public class SubSystemRunner<KernelType> {
 
     private void startDependencies() {
         this.subsystem.dependencies().forEach((dep) -> {
-            dep.dependency().init();
-            this.console.dependencyStarted(this.subsystem, dep.dependency());
+            final InitStatus status = dep.dependency().init();
+            this.console.dependencyInitStatus(this.subsystem, dep.dependency(), status);
         });
     }
 
     private void startSignalSystems() {
         this.subsystem.signalSystems().forEach((signalSystem) -> {
-            signalSystem.init();
-            this.console.signalSystemStarted(this.subsystem, signalSystem);
+            final InitStatus status = signalSystem.init();
+            this.console.signalSystemInitStatus(this.subsystem, signalSystem, status);
         });
     }
 }
