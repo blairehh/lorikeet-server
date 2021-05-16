@@ -2,7 +2,6 @@ package lorikeet.server;
 
 import lorikeet.Axon;
 import lorikeet.DefaultAxon;
-import lorikeet.dependencies.Dependency;
 import lorikeet.disk.Disk;
 import lorikeet.disk.DiskFile;
 import lorikeet.disk.FileDigResult;
@@ -10,11 +9,11 @@ import lorikeet.dsl.DSLReader;
 import lorikeet.dsl.DSLSpec;
 import lorikeet.server.signals.SignalSystem;
 import lorikeet.subsystem.SubSystem;
+import lorikeet.subsystem.SubSystemDependency;
 import lorikeet.subsystem.SubSystemJAR;
 import lorikeet.subsystem.SubSystemJARLoader;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Server {
@@ -42,32 +41,22 @@ public class Server {
             System.out.println("found subsystem " + spec.getName());
             System.out.println("kernel is " + spec.getKernel().getClass().getName());
 
-            this.buildSubSystem(spec);
-            // this.run(this.buildAxon(spec), spec);
+            this.run(this.buildSubSystem(spec));
         } else {
             System.out.println("could not find " + args.jar());
         }
 
     }
 
-    private <KernalType> void run(Axon<KernalType> axon, DSLSpec spec) {
-        spec.getDependencies()
-            .entrySet()
+    private <KernelType> void run(SubSystem<KernelType> subSystem) {
+        subSystem.dependencies()
             .forEach(this::initDependency);
 
         // ((LifeCycleDSLSpec)spec.getSignals().get(0).dslSpec()).getReady().onReady(axon);
     }
 
-    private void initDependency(Map.Entry<String, Dependency> keyValue) {
-        final String name = keyValue.getKey();
-        final Dependency dependency = keyValue.getValue();
-
-        dependency.init();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <KernelType> Axon<KernelType> buildAxon(DSLSpec spec) {
-        return new DefaultAxon<>((KernelType)spec.getKernel());
+    private void initDependency(SubSystemDependency subSystemDependency) {
+        subSystemDependency.dependency().init();
     }
 
     @SuppressWarnings("unchecked")
@@ -76,10 +65,17 @@ public class Server {
             .map((subsystem) -> (SignalSystem<KernelType>)subsystem.buildSignalSystem())
             .collect(Collectors.toList());
 
+        final List<SubSystemDependency> dependencies = spec.getDependencies()
+            .entrySet()
+            .stream()
+            .map((keyValue) -> new SubSystemDependency(keyValue.getKey(), keyValue.getValue()))
+            .collect(Collectors.toList());
+
         final Axon<KernelType> axon = new DefaultAxon<>((KernelType)spec.getKernel());
 
         return new SubSystem<>(
             axon,
+            dependencies,
             signalSystems
         );
     }
