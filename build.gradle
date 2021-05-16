@@ -1,0 +1,65 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'java'
+}
+
+sourceCompatibility = 16
+targetCompatibility = 16
+
+
+allprojects {
+    repositories {
+        maven {
+            url 'https://maven.pkg.github.com/blairehh/lorikeet-core'
+            credentials {
+                username = project.findProperty('gpr.user') ?: System.getenv('GPR_USER')
+                password = project.findProperty('gpr.key') ?: System.getenv('GPR_API_KEY')
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'blairehh:lorikeet-core:b78b02e'
+    implementation 'org.codehaus.groovy:groovy:3.0.8'
+    implementation 'commons-cli:commons-cli:1.4'
+
+    testImplementation 'org.assertj:assertj-core:3.17.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+jar {
+    manifest.attributes('Main-Class': 'lorikeet.Main')
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+}
+
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+}
+
+
+wrapper {
+    gradleVersion = '7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
