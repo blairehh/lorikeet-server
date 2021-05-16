@@ -5,8 +5,6 @@ import groovy.lang.Closure;
 import lorikeet.dependencies.Dependency;
 import lorikeet.server.signals.SignalSystemDSL;
 import lorikeet.server.signals.lifecycle.LifeCycleDSL;
-import lorikeet.server.signals.lifecycle.LifeCycleDSLSpec;
-import lorikeet.server.signals.SignalSystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class DSLSpec {
-    private final List<DSLSignal> signals;
+    private final List<SignalSystemDSL> signals;
     private String name;
     private Object kernel;
     private final Map<String, Dependency> dependencies = new HashMap<>();
@@ -25,14 +23,13 @@ public class DSLSpec {
     }
 
 
-    public DSLSignal signals(SignalSystemDSL system, Closure<?> closure) {
+    public SignalSystemDSL signals(SignalSystemDSL system, Closure<?> closure) {
         final Object systemDsl = system.dslSpec();
-        final DSLSignal signal = new DSLSignal(system, systemDsl);
         final Closure<?> code = closure.rehydrate(systemDsl, this, this);
         code.setResolveStrategy(Closure.DELEGATE_ONLY);
         code.call();
-        this.signals.add(signal);
-        return signal;
+        this.signals.add(system);
+        return system;
     }
 
     // ---------------------------------------------------------
@@ -77,7 +74,7 @@ public class DSLSpec {
 
     // -------------------------------------------------------
 
-    public List<DSLSignal> getSignals() {
+    public List<SignalSystemDSL> getSignalSystems() {
         return this.signals;
     }
 
