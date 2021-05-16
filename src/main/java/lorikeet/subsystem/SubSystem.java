@@ -23,4 +23,12 @@ public class SubSystem<KernelType> {
     public List<SubSystemDependency> dependencies() {
         return this.dependencies;
     }
+
+    public List<SignalSystem<KernelType>> signalSystems() {
+        return this.signalSystems;
+    }
+
+    public Axon<KernelType> axon() {
+        return this.axon;
+    }
 }

@@ -27,7 +27,7 @@ public class LifeCycleDSL implements SignalSystemDSL {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <KernelType> SignalSystem buildSignalSystem() {
+    public <KernelType> SignalSystem<KernelType> buildSignalSystem() {
         final List<SubSystemReadyReceptor<KernelType>> readyReceptors = this.dslSpec.getReady()
             .stream()
             .map((ready) -> (SubSystemReadyReceptor<KernelType>)ready)

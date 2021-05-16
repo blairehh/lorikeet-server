@@ -12,6 +12,7 @@ import lorikeet.subsystem.SubSystem;
 import lorikeet.subsystem.SubSystemDependency;
 import lorikeet.subsystem.SubSystemJAR;
 import lorikeet.subsystem.SubSystemJARLoader;
+import lorikeet.subsystem.SubSystemRunner;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,15 +49,8 @@ public class Server {
 
     }
 
-    private <KernelType> void run(SubSystem<KernelType> subSystem) {
-        subSystem.dependencies()
-            .forEach(this::initDependency);
-
-        // ((LifeCycleDSLSpec)spec.getSignals().get(0).dslSpec()).getReady().onReady(axon);
-    }
-
-    private void initDependency(SubSystemDependency subSystemDependency) {
-        subSystemDependency.dependency().init();
+    private <KernelType> void run(SubSystem<KernelType> subsystem) {
+        new SubSystemRunner<>(subsystem).run();
     }
 
     @SuppressWarnings("unchecked")

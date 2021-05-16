@@ -1,5 +1,6 @@
 package lorikeet.server.signals;
 
-public interface SignalSystem<KernelType> {
-    String name();
+import lorikeet.dependencies.Dependency;
+
+public interface SignalSystem<KernelType> extends Dependency {
 }
