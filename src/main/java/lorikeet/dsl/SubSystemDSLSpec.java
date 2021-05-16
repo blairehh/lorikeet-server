@@ -12,16 +12,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class DSLSpec {
+public class SubSystemDSLSpec {
     private final List<SignalSystemDSL> signals;
     private String name;
     private Object kernel;
     private final Map<String, Dependency> dependencies = new HashMap<>();
 
-    public DSLSpec() {
+    public SubSystemDSLSpec() {
         this.signals = new ArrayList<>();
     }
-
 
     public SignalSystemDSL signals(SignalSystemDSL system, Closure<?> closure) {
         final Object systemDsl = system.dslSpec();

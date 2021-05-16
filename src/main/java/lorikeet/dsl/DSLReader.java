@@ -14,9 +14,9 @@ public class DSLReader {
         this.scriptEngine = new GroovyScriptEngine(new URL[]{root});
     }
 
-    public DSLSpec read(String file) {
+    public SubSystemDSLSpec read(String file) {
         final Binding binding = new Binding();
-        final DSLSpec spec = new DSLSpec();
+        final SubSystemDSLSpec spec = new SubSystemDSLSpec();
         try {
             scriptEngine.run(file, spec.addSpecBindings(binding));
         } catch (ResourceException | ScriptException e) {

@@ -6,7 +6,7 @@ import lorikeet.disk.Disk;
 import lorikeet.disk.DiskFile;
 import lorikeet.disk.FileDigResult;
 import lorikeet.dsl.DSLReader;
-import lorikeet.dsl.DSLSpec;
+import lorikeet.dsl.SubSystemDSLSpec;
 import lorikeet.server.signals.SignalSystem;
 import lorikeet.subsystem.SubSystem;
 import lorikeet.subsystem.SubSystemDependency;
@@ -36,7 +36,7 @@ public class Server {
             final SubSystemJAR subsystemJar = loader.load(file);
 
             final DSLReader reader = new DSLReader(file.asJarURL());
-            final DSLSpec spec = reader.read("index.lorikeet");
+            final SubSystemDSLSpec spec = reader.read("index.lorikeet");
             this.run(this.buildSubSystem(spec));
         } else {
             System.out.println("could not find " + args.jar());
@@ -49,7 +49,7 @@ public class Server {
     }
 
     @SuppressWarnings("unchecked")
-    private <KernelType> SubSystem<KernelType> buildSubSystem(DSLSpec spec) {
+    private <KernelType> SubSystem<KernelType> buildSubSystem(SubSystemDSLSpec spec) {
         final List<SignalSystem<KernelType>> signalSystems = spec.getSignalSystems().stream()
             .map((subsystem) -> (SignalSystem<KernelType>)subsystem.buildSignalSystem())
             .collect(Collectors.toList());
