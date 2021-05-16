@@ -37,11 +37,6 @@ public class Server {
 
             final DSLReader reader = new DSLReader(file.asJarURL());
             final DSLSpec spec = reader.read("index.lorikeet");
-
-
-            System.out.println("found subsystem " + spec.getName());
-            System.out.println("kernel is " + spec.getKernel().getClass().getName());
-
             this.run(this.buildSubSystem(spec));
         } else {
             System.out.println("could not find " + args.jar());

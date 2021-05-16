@@ -1,6 +1,7 @@
 package lorikeet.subsystem;
 
 import lorikeet.dependencies.Dependency;
+import lorikeet.server.signals.lifecycle.LifeCycleSignalSystem;
 
 public class SubSystemRunner<KernelType> {
 
@@ -13,7 +14,16 @@ public class SubSystemRunner<KernelType> {
     public void run() {
         this.startDependencies();
         this.startSignalSystems();
-        // ((LifeCycleDSLSpec)spec.getSignals().get(0).dslSpec()).getReady().onReady(axon);
+
+        this.signalReady();
+    }
+
+    private void signalReady() {
+        this.subsystem.signalSystems().forEach((signalSystem) -> {
+            if (signalSystem instanceof LifeCycleSignalSystem<KernelType> lifeCycle) {
+                lifeCycle.signalReady(this.subsystem.axon());
+            }
+        });
     }
 
     private void startDependencies() {

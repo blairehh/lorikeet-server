@@ -1,5 +1,6 @@
 package lorikeet.server.signals.lifecycle;
 
+import lorikeet.Axon;
 import lorikeet.dependencies.CheckStatus;
 import lorikeet.dependencies.InitStatus;
 import lorikeet.dependencies.RetireStatus;
@@ -14,6 +15,10 @@ public class LifeCycleSignalSystem<KernelType> implements SignalSystem<KernelTyp
 
     public LifeCycleSignalSystem(List<SubSystemReadyReceptor<KernelType>> readyReceptors) {
         this.readyReceptors = readyReceptors;
+    }
+
+    public void signalReady(Axon<KernelType> axon) {
+        this.readyReceptors.forEach((ready) -> ready.onReady(axon));
     }
 
     @Override
