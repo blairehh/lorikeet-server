@@ -1,6 +1,6 @@
 package lorikeet.console;
 
-import lorikeet.dependencies.Dependency;
+import lorikeet.dependencies.ConstDependency;
 import lorikeet.dependencies.InitStatus;
 import lorikeet.server.signals.SignalSystem;
 import lorikeet.subsystem.SubSystem;
@@ -12,7 +12,7 @@ import static com.diogonunes.jcolor.Attribute.RED_TEXT;
 
 public class PrettyConsoleWriter implements ConsoleWriter {
     @Override
-    public void dependencyInitStatus(SubSystem<?> subsystem, Dependency dependency, InitStatus status) {
+    public void dependencyInitStatus(SubSystem<?> subsystem, ConstDependency dependency, InitStatus status) {
         System.out.printf(
             "[%s] %-20s %-20s %s\n",
             colorize(subsystem.name(), BOLD()),

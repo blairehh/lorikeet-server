@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'blairehh:lorikeet-core:456251d'
+    implementation 'blairehh:lorikeet-core:227bf67'
     implementation 'org.codehaus.groovy:groovy:3.0.8'
     implementation 'commons-cli:commons-cli:1.4'
     implementation 'com.diogonunes:JColor:5.0.1'
