@@ -2,6 +2,8 @@ package lorikeet.server;
 
 import lorikeet.Axon;
 import lorikeet.DefaultAxon;
+import lorikeet.console.ConsoleWriter;
+import lorikeet.console.SimpleConsoleWriter;
 import lorikeet.disk.Disk;
 import lorikeet.disk.DiskFile;
 import lorikeet.disk.FileDigResult;
@@ -27,7 +29,6 @@ public class Server {
     }
 
     public void run() throws Exception {
-
         final FileDigResult result = this.disk.digFile(args.jar());
         if (result instanceof FileDigResult.Found found) {
             final DiskFile file = found.file();
@@ -37,15 +38,15 @@ public class Server {
 
             final DSLReader reader = new DSLReader(file.asJarURL());
             final SubSystemDSLSpec spec = reader.read("index.lorikeet");
-            this.run(this.buildSubSystem(spec));
+            this.run(this.buildSubSystem(spec), new SimpleConsoleWriter());
         } else {
             System.out.println("could not find " + args.jar());
         }
 
     }
 
-    private <KernelType> void run(SubSystem<KernelType> subsystem) {
-        new SubSystemRunner<>(subsystem).run();
+    private <KernelType> void run(SubSystem<KernelType> subsystem, ConsoleWriter console) {
+        new SubSystemRunner<>(subsystem, console).run();
     }
 
     @SuppressWarnings("unchecked")
