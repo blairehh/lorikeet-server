@@ -8,10 +8,14 @@ import lorikeet.disk.DiskFile;
 import lorikeet.disk.FileDigResult;
 import lorikeet.dsl.DSLReader;
 import lorikeet.dsl.DSLSpec;
+import lorikeet.server.signals.SignalSystem;
+import lorikeet.subsystem.SubSystem;
 import lorikeet.subsystem.SubSystemJAR;
 import lorikeet.subsystem.SubSystemJARLoader;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Server {
     private final ServerArgs args;
@@ -38,14 +42,15 @@ public class Server {
             System.out.println("found subsystem " + spec.getName());
             System.out.println("kernel is " + spec.getKernel().getClass().getName());
 
-            this.run(this.buildAxon(spec), spec);
+            this.buildSubSystem(spec);
+            // this.run(this.buildAxon(spec), spec);
         } else {
             System.out.println("could not find " + args.jar());
         }
 
     }
 
-    private <T> void run(Axon<T> axon, DSLSpec spec) {
+    private <KernalType> void run(Axon<KernalType> axon, DSLSpec spec) {
         spec.getDependencies()
             .entrySet()
             .forEach(this::initDependency);
@@ -61,7 +66,21 @@ public class Server {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Axon<T> buildAxon(DSLSpec spec) {
-        return new DefaultAxon<>((T)spec.getKernel());
+    private <KernelType> Axon<KernelType> buildAxon(DSLSpec spec) {
+        return new DefaultAxon<>((KernelType)spec.getKernel());
+    }
+
+    @SuppressWarnings("unchecked")
+    private <KernelType> SubSystem<KernelType> buildSubSystem(DSLSpec spec) {
+        final List<SignalSystem<KernelType>> signalSystems = spec.getSignalSystems().stream()
+            .map((subsystem) -> (SignalSystem<KernelType>)subsystem.buildSignalSystem())
+            .collect(Collectors.toList());
+
+        final Axon<KernelType> axon = new DefaultAxon<>((KernelType)spec.getKernel());
+
+        return new SubSystem<>(
+            axon,
+            signalSystems
+        );
     }
 }

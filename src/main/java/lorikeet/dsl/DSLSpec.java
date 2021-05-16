@@ -38,8 +38,8 @@ public class DSLSpec {
         final SignalSystemDSL lifecycle = new LifeCycleDSL();
         binding.setVariable(lifecycle.name(), lifecycle);
         final Closure<?> onSignals = new Closure<Void>(null) {
-            public void doCall(SignalSystemDSL system, Closure<?> closure) {
-                signals(system, closure);
+            public SignalSystemDSL doCall(SignalSystemDSL system, Closure<?> closure) {
+                return signals(system, closure);
             }
         };
         final Closure<?> onSubsystem = new Closure<Void>(null) {

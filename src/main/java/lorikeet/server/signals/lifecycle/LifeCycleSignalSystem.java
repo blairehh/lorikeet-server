@@ -5,11 +5,11 @@ import lorikeet.signals.lifecycle.SubSystemReadyReceptor;
 
 import java.util.List;
 
-public class LifecycleSignalSystem<KernelType> implements SignalSystem {
+public class LifeCycleSignalSystem<KernelType> implements SignalSystem<KernelType> {
 
     private final List<SubSystemReadyReceptor<KernelType>> readyReceptors;
 
-    public LifecycleSignalSystem(List<SubSystemReadyReceptor<KernelType>> readyReceptors) {
+    public LifeCycleSignalSystem(List<SubSystemReadyReceptor<KernelType>> readyReceptors) {
         this.readyReceptors = readyReceptors;
     }
 

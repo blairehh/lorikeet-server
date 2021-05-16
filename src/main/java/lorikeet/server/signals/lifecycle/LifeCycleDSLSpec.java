@@ -2,14 +2,21 @@ package lorikeet.server.signals.lifecycle;
 
 import lorikeet.signals.lifecycle.SubSystemReadyReceptor;
 
-public class LifeCycleDSLSpec {
-    private SubSystemReadyReceptor<?> ready;
+import java.util.ArrayList;
+import java.util.List;
 
-    public void ready(SubSystemReadyReceptor<?> value) {
-        this.ready = value;
+public class LifeCycleDSLSpec {
+    private final List<SubSystemReadyReceptor<?>> ready;
+
+    public LifeCycleDSLSpec() {
+        this.ready = new ArrayList<>();
     }
 
-    public SubSystemReadyReceptor<?> getReady() {
+    public void ready(SubSystemReadyReceptor<?> value) {
+        this.ready.add(value);
+    }
+
+    public List<SubSystemReadyReceptor<?>> getReady() {
         return this.ready;
     }
 }

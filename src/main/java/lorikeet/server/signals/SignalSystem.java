@@ -1,5 +1,5 @@
 package lorikeet.server.signals;
 
-public interface SignalSystem {
+public interface SignalSystem<KernelType> {
     String name();
 }
