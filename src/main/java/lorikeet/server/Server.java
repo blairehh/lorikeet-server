@@ -8,10 +8,12 @@ import lorikeet.disk.DiskFile;
 import lorikeet.disk.FileDigResult;
 import lorikeet.dsl.DSLReader;
 import lorikeet.dsl.SubSystemDSLSpec;
+import lorikeet.exceptions.SubSystemJARFileNotFoundException;
 import lorikeet.server.signals.SignalSystem;
 import lorikeet.subsystem.SubSystem;
 import lorikeet.subsystem.SubSystemDependency;
 import lorikeet.subsystem.SubSystemJAR;
+import lorikeet.subsystem.SubSystemJARLoadResult;
 import lorikeet.subsystem.SubSystemJARLoader;
 import lorikeet.subsystem.SubSystemRunner;
 
@@ -28,20 +30,29 @@ public class Server {
     }
 
     public void run() throws Exception {
+        final ConsoleWriter console = new PrettyConsoleWriter();
         final FileDigResult result = this.disk.digFile(args.jar());
         if (result instanceof FileDigResult.Found found) {
             final DiskFile file = found.file();
-
             final SubSystemJARLoader loader = new SubSystemJARLoader();
-            final SubSystemJAR subsystemJar = loader.load(file);
-
-            final DSLReader reader = new DSLReader(file.asJarURL());
-            final SubSystemDSLSpec spec = reader.read("index.lorikeet");
-            this.run(this.buildSubSystem(spec), new PrettyConsoleWriter());
+            final SubSystemJARLoadResult loadResult = loader.load(file);
+            if (loadResult instanceof SubSystemJARLoadResult.Ok ok) {
+                this.run(file, ok.subsystem(), console);
+            } else if (loadResult instanceof SubSystemJARLoadResult.UnexpectedError error) {
+                console.error(error.throwable());
+            } else if (loadResult instanceof SubSystemJARLoadResult.InvalidJAR invalid) {
+                console.problem(invalid.problem());
+            }
         } else {
-            System.out.println("could not find " + args.jar());
+            console.problem(new SubSystemJARFileNotFoundException(args.jar()));
         }
 
+    }
+
+    private void run(DiskFile file, SubSystemJAR subsystemJar, ConsoleWriter console) {
+        final DSLReader reader = new DSLReader(file.asJarURL());
+        final SubSystemDSLSpec spec = reader.read("index.lorikeet");
+        this.run(this.buildSubSystem(spec), console);
     }
 
     private <KernelType> void run(SubSystem<KernelType> subsystem, ConsoleWriter console) {

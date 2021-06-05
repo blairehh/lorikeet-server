@@ -1,6 +1,8 @@
 package lorikeet.subsystem;
 
 import lorikeet.disk.DiskFile;
+import lorikeet.exceptions.FailedToLoadJARFileException;
+import lorikeet.exceptions.NoIndexFileInSubSystemJARException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,19 +14,23 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class SubSystemJARLoader {
-    public SubSystemJAR load(DiskFile file) {
-
+    public SubSystemJARLoadResult load(DiskFile file) {
         try {
             final JarFile jarFile = new JarFile(file.fullPath());
             final Enumeration<JarEntry> enumeration = jarFile.entries();
             final URL[] urls = { file.asJarURL() };
             final URLClassLoader classLoader = URLClassLoader.newInstance(urls);
-
             final List<Class<?>> javaClasses = new ArrayList<>();
+
+            boolean foundIndex = false;
+
             while (enumeration.hasMoreElements()) {
                 final JarEntry entry = enumeration.nextElement();
                 if (entry.isDirectory()) {
                     continue;
+                }
+                if (entry.getName().equals("index.lorikeet")) {
+                    foundIndex = true;
                 }
                 if(!entry.getName().endsWith(".class")){
                     continue;
@@ -37,10 +43,13 @@ public class SubSystemJARLoader {
                 javaClasses.add(classLoader.loadClass(className));
             }
 
-            return new SubSystemJAR(javaClasses, null);
+            if (!foundIndex) {
+                return new SubSystemJARLoadResult.InvalidJAR(new NoIndexFileInSubSystemJARException(file));
+            }
+
+            return new SubSystemJARLoadResult.Ok(new SubSystemJAR(javaClasses));
         } catch (IOException | ClassNotFoundException ioe) {
-            ioe.printStackTrace();
-            return null;
+            return new SubSystemJARLoadResult.UnexpectedError(new FailedToLoadJARFileException(file.fullPath(), ioe));
         }
     }
 }

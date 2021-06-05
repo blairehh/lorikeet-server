@@ -1,5 +1,6 @@
 package lorikeet.console;
 
+import lorikeet.Problem;
 import lorikeet.dependencies.ConstDependency;
 import lorikeet.dependencies.InitStatus;
 import lorikeet.server.signals.SignalSystem;
@@ -19,5 +20,16 @@ public class SimpleConsoleWriter implements ConsoleWriter {
     @Override
     public void subsystemReady(SubSystem<?> subsystem) {
         System.out.println(subsystem.name() + " is ready!");
+    }
+
+    @Override
+    public void error(Throwable error) {
+        System.out.println("ERROR! " + error.getMessage());
+        error.printStackTrace();
+    }
+
+    @Override
+    public void problem(Problem problem) {
+        System.out.println("ERROR! " + problem.code());
     }
 }
